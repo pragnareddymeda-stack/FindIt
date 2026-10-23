@@ -1,0 +1,31 @@
+# Render blueprint: ONE web service that runs the API and also serves the built React app (single origin).
+# Single origin means the login cookie is first-party, so there are no cross-site cookie problems.
+# Not deployed or verified by me. See README > Deployment.
+services:
+  - type: web
+    name: findit
+    runtime: node
+    plan: free
+    buildCommand: npm run install:all && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: SERVE_CLIENT
+        value: "true"
+      - key: COOKIE_SAMESITE
+        value: lax
+      - key: MONGODB_URI
+        sync: false            # your MongoDB Atlas connection string
+      - key: CLIENT_URL
+        sync: false            # the public URL of this service, e.g. https://findit.onrender.com (no trailing slash)
+      - key: JWT_SECRET
+        generateValue: true
+      # Optional photo upload (set all three or none):
+      # - key: CLOUDINARY_CLOUD_NAME
+      #   sync: false
+      # - key: CLOUDINARY_API_KEY
+      #   sync: false
+      # - key: CLOUDINARY_API_SECRET
+      #   sync: false
